@@ -24,7 +24,7 @@ class xylem::node (
   file {'/etc/xylem/xylem.yml':
     ensure  => present,
     content => template('xylem/xylem.yml.erb'),
-    mode    => 0644, 
+    mode    => '0644',
   }
 
   package {'seed-xylem':

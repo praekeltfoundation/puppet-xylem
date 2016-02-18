@@ -15,3 +15,5 @@ Puppetfile.lock
 
 # Puppet
 /pkg/
+
+.*.swp
