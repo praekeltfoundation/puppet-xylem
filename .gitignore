@@ -16,4 +16,6 @@ Puppetfile.lock
 # Puppet
 /pkg/
 
+# Other
+.ruby-version
 .*.swp

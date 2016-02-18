@@ -11,7 +11,7 @@ queues:
         - <%= node %>
         <%- end -%>
       <%- if @gluster_replica then -%>
-      gluster_replica: <%= @gulster_replica %>
+      gluster_replica: <%= @gluster_replica %>
       <%- end -%>
       <%- if @gluster_stripe then -%>
       gluster_stripe: <%= @gluster_stripe %>
@@ -24,7 +24,7 @@ queues:
       key: <%= @postgres_secret %>
       servers:
           - hostname: <%= @postgres_host %>
-            username: <%= @postgres_user %> 
+            username: <%= @postgres_user %>
             <%- if @postgres_password -%>
             password: <%= @postgres_password %>
             <%- end -%>
