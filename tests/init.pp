@@ -16,14 +16,13 @@ class {'xylem::docker':
 }
 
 class {'xylem::node':
-  gluster           => true,
-  gluster_mounts    => ['/data/1', '/data/2'],
-  gluster_nodes     => ['test'],
-  gluster_replica   => 2,
-  gluster_stripe    => 2,
-  postgres          => true,
-  postgres_host     => 'localhost',
-  postgres_user     => 'postgres',
-  postgres_secret   => 'testkey'
+  gluster         => true,
+  gluster_mounts  => ['/data/1', '/data/2'],
+  gluster_nodes   => ['test'],
+  gluster_replica => 2,
+  gluster_stripe  => 2,
+  postgres        => true,
+  postgres_host   => 'localhost',
+  postgres_user   => 'postgres',
+  postgres_secret => 'testkey',
 }
-

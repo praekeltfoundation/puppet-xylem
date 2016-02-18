@@ -1,41 +1,74 @@
+# == Class: xylem::node
+#
+# Installs the Xylem glusterfs backend and configures and manages the service.
+#
+# === Parameters
+#
+# [*gluster*]
+#   If `true` xylem will manage glusterfs volumes on this node.
+#
+# [*gluster_mounts*]
+#   List of brick mounts on each glusterfs peer host.
+#
+# [*gluster_nodes*]
+#   List of glusterfs peer hosts.
+#
+# [*gluster_replica*]
+#   The number of replicas for a replicated volume. If given, it must be an
+#   integer greater than or equal to 2 or `false` to disable replication.
+#
+# [*gluster_stripe*]
+#   The number of stripes for a striped volume. If given, it must be an integer
+#   greater than or equal to 2 or `false` to disable striping.
+#
+# [*postgres*]
+#   If `true` xylem will manage postgres databases.
+#
+# [*postgres_host*]
+#   XXX
+#
+# [*postgres_user*]
+#   XXX
+#
+# [*postgres_password*]
+#   XXX
+#
+# [*postgres_secret*]
+#   XXX
+#
+# [*package_ensure*]
+#   The ensure value for the seed-xylem package.
+#
 class xylem::node (
-    $gluster=false,
-    $gluster_mounts=[],
-    $gluster_nodes=[],
-    $gluster_replica=false,
-    $gluster_stripe=false,
-    $postgres=false,
-    $postgres_host=false,
-    $postgres_user=false,
-    $postgres_password=false,
-    $postgres_secret=false
+  $gluster           = false,
+  $gluster_mounts    = [],
+  $gluster_nodes     = [],
+  $gluster_replica   = false,
+  $gluster_stripe    = false,
+
+  $postgres          = false,
+  $postgres_host     = false,
+  $postgres_user     = false,
+  $postgres_password = false,
+  $postgres_secret   = false,
+
+  $package_ensure    = 'installed',
   ){
 
-  if ! defined(Apt::Source['seed']) {
-    apt::source{'seed':
-      location    => 'https://praekeltfoundation.github.io/packages/',
-      repos       => 'main',
-      release     => inline_template('<%= @lsbdistcodename.downcase %>'),
-      key         => 'F996C16C',
-      key_server  => 'keyserver.ubuntu.com',
-      include_src => false
-    }
-  }
+  validate_array($gluster_mounts)
+  validate_array($gluster_nodes)
 
+  package { 'seed-xylem':
+    ensure => $package_ensure,
+  }
+  ->
   file {'/etc/xylem/xylem.yml':
     ensure  => present,
     content => template('xylem/xylem.yml.erb'),
     mode    => '0644',
   }
-
-  package {'seed-xylem':
-    ensure  => latest,
-    require => Apt::Source['seed']
-  }
-
+  ~>
   service {'xylem':
-    ensure    => running,
-    require   => Package['seed-xylem'],
-    subscribe => File['/etc/xylem/xylem.yml'],
+    ensure => running,
   }
 }
