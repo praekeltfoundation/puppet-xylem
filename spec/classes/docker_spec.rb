@@ -37,7 +37,7 @@ describe 'xylem::docker' do
 
       describe 'when backend is not given' do
         it do
-          is_expected.to compile.and_raise_error(/Must pass backend/)
+          is_expected.to raise_error(/Must pass backend/)
         end
       end
 
