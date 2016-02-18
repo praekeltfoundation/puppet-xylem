@@ -12,8 +12,19 @@
 #
 class xylem::docker (
   $backend,
+  $repo_manage    = true,
+  $repo_source    = 'p16n-seed',
   $package_ensure = 'installed',
 ) {
+  validate_bool($repo_manage)
+
+  if $repo_manage {
+    class { 'xylem::repo':
+      manage => $repo_manage,
+      source => $repo_source,
+    }
+  }
+
   package { 'docker-xylem':
     ensure => $package_ensure,
   }
@@ -26,5 +37,9 @@ class xylem::docker (
   ~>
   service { 'docker-xylem':
     ensure => running,
+  }
+
+  if defined(Class['xylem::repo']) {
+    Class['xylem::repo'] -> Package['docker-xylem']
   }
 }

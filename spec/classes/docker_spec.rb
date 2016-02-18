@@ -10,7 +10,11 @@ describe 'xylem::docker' do
 
         it { is_expected.to contain_class('xylem::docker') }
 
-        it { is_expected.not_to contain_class('xylem::repo') }
+        it do
+          is_expected.to contain_class('xylem::repo')
+            .with({'manage' => true, 'source' => 'p16n-seed'})
+            .that_comes_before('Package[docker-xylem]')
+        end
 
         it do
           is_expected.to contain_package('docker-xylem')

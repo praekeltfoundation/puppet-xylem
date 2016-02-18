@@ -52,11 +52,20 @@ class xylem::node (
   $postgres_password = false,
   $postgres_secret   = false,
 
+  $repo_manage       = true,
+  $repo_source       = 'p16n-seed',
   $package_ensure    = 'installed',
-  ){
-
+){
   validate_array($gluster_mounts)
   validate_array($gluster_nodes)
+  validate_bool($repo_manage)
+
+  if $repo_manage {
+    class { 'xylem::repo':
+      manage => $repo_manage,
+      source => $repo_source,
+    }
+  }
 
   package { 'seed-xylem':
     ensure => $package_ensure,
@@ -70,5 +79,9 @@ class xylem::node (
   ~>
   service {'xylem':
     ensure => running,
+  }
+
+  if defined(Class['xylem::repo']) {
+    Class['xylem::repo'] -> Package['seed-xylem']
   }
 }

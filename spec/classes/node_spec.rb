@@ -9,7 +9,11 @@ describe 'xylem::node' do
       describe 'with default parameters' do
         it { is_expected.to contain_class('xylem::node') }
 
-        it { is_expected.not_to contain_class('xylem::repo') }
+        it do
+          is_expected.to contain_class('xylem::repo')
+            .with({'manage' => true, 'source' => 'p16n-seed'})
+            .that_comes_before('Package[seed-xylem]')
+        end
 
         it do
           is_expected.to contain_package('seed-xylem')
