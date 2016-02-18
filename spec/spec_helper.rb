@@ -9,3 +9,7 @@ require 'yaml'
 def match_yaml(expected)
   proc { |content| match(expected) === YAML.load(content) }
 end
+
+def missing_param(param)
+  /(Must pass #{param}|expects a value for parameter '#{param}')/
+end
