@@ -16,7 +16,8 @@ class xylem::node (
       location    => 'https://praekeltfoundation.github.io/packages/',
       repos       => 'main',
       release     => inline_template('<%= @lsbdistcodename.downcase %>'),
-      key_source  => 'https://praekeltfoundation.github.io/packages/conf/seed.gpg.key',
+      key         => 'F996C16C',
+      key_server  => 'keyserver.ubuntu.com',
       include_src => false
     }
   }
