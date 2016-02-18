@@ -46,15 +46,17 @@ describe 'xylem::docker' do
       end
 
       describe 'when package_ensure is purged' do
-        let(:params) do
-          {
-            :backend => 'gfs.local',
-            :package_ensure => 'purged',
-          }
-        end
+        let(:params) { {:backend => 'gfs.local', :package_ensure => 'purged'} }
         it do
           is_expected.to contain_package('docker-xylem')
             .with_ensure('purged')
+        end
+      end
+
+      describe 'when repo_manage is false' do
+        let(:params) { {:backend => 'gfs.local', :repo_manage => false} }
+        it do
+          is_expected.not_to contain_class('xylem::repo')
         end
       end
     end
