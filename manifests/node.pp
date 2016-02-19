@@ -47,10 +47,10 @@ class xylem::node (
   $gluster_stripe    = false,
 
   $postgres          = false,
-  $postgres_host     = false,
-  $postgres_user     = false,
-  $postgres_password = false,
-  $postgres_secret   = false,
+  $postgres_host     = undef,
+  $postgres_user     = undef,
+  $postgres_password = undef,
+  $postgres_secret   = undef,
 
   $repo_manage       = true,
   $repo_source       = 'p16n-seed',

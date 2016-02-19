@@ -95,6 +95,53 @@ describe 'xylem::node' do
         end
       end
 
+      describe 'when postgres is configured' do
+        let(:params) { {:postgres => true} }
+
+        it do
+          is_expected.to contain_file('/etc/xylem/xylem.yml')
+            .with_content(match_yaml({
+                'queues' => [{
+                    'name' => 'postgres',
+                    'plugin' => 'seed.xylem.postgres',
+                    'key' => nil,
+                    'servers' => [{
+                        'hostname' => nil,
+                        'username' => nil,
+                      }]
+                  }]
+              }))
+        end
+
+        describe 'with all params' do
+          let(:params) do
+            {
+              :postgres => true,
+              :postgres_host => 'db.local',
+              :postgres_user => 'pguser',
+              :postgres_password => 'pgpass',
+              :postgres_secret => 'pgsec',
+            }
+          end
+
+          it do
+            is_expected.to contain_file('/etc/xylem/xylem.yml')
+              .with_content(match_yaml({
+                  'queues' => [{
+                      'name' => 'postgres',
+                      'plugin' => 'seed.xylem.postgres',
+                      'key' => 'pgsec',
+                      'servers' => [{
+                          'hostname' => 'db.local',
+                          'username' => 'pguser',
+                          'password' => 'pgpass',
+                        }]
+                    }]
+                }))
+          end
+        end
+      end
+
       describe 'when package_ensure is purged' do
         let(:params) { {:package_ensure => 'purged'} }
         it do
