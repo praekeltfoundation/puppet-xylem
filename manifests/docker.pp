@@ -25,6 +25,10 @@ class xylem::docker (
     }
   }
 
+  file { '/run/docker/plugins':
+    ensure => 'directory',
+  }
+
   package { 'docker-xylem':
     ensure => $package_ensure,
   }
@@ -36,7 +40,8 @@ class xylem::docker (
   }
   ~>
   service { 'docker-xylem':
-    ensure => running,
+    ensure  => running,
+    require => File['/run/docker/plugins'],
   }
 
   if defined(Class['xylem::repo']) {
