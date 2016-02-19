@@ -31,6 +31,9 @@ class xylem::docker (
     }
   }
 
+  # This directory doesn't really belong to us, but we need it to exist and
+  # docker apparently doesn't create it. Therefore, we manage it only if
+  # nothing else already does.
   unless defined(File['/run/docker/plugins']) {
     file { '/run/docker/plugins':
       ensure => 'directory',
