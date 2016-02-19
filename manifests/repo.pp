@@ -1,5 +1,15 @@
 # == Class: xylem::repo
 #
+# Manages the repository containing xylem packages.
+#
+# === Parameters
+#
+# [*manage*]
+#   If true, the repo will be managed.
+#
+# [*source*]
+#   Name of repo source to use. Valid values: p16n-seed
+#
 class xylem::repo (
   $manage = true,
   $source = 'p16n-seed',
@@ -19,16 +29,6 @@ class xylem::repo (
           key_server  => 'keyserver.ubuntu.com',
           include_src => false,
         }
-
-        # apt::source{ 'p16n-seed':
-        #   location => "${urlbase}/packages/",
-        #   repos    => 'main',
-        #   release  => inline_template('<%= @lsbdistcodename.downcase %>'),
-        #   key      => {
-        #     id     => '864DC0AA3139DFA3C332B9527EAFC9B3F996C16C',
-        #     source => "${urlbase}/packages/conf/seed.gpg.key",
-        #   },
-        # }
 
         # Ensure apt-get update runs as part of this class
         contain 'apt::update'
