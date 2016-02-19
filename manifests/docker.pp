@@ -31,8 +31,10 @@ class xylem::docker (
     }
   }
 
-  file { '/run/docker/plugins':
-    ensure => 'directory',
+  unless defined(File['/run/docker/plugins']) {
+    file { '/run/docker/plugins':
+      ensure => 'directory',
+    }
   }
 
   package { 'docker-xylem':
