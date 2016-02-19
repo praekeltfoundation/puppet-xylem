@@ -15,11 +15,11 @@
 #
 # [*gluster_replica*]
 #   The number of replicas for a replicated volume. If given, it must be an
-#   integer greater than or equal to 2 or `false` to disable replication.
+#   integer greater than or equal to 2.
 #
 # [*gluster_stripe*]
 #   The number of stripes for a striped volume. If given, it must be an integer
-#   greater than or equal to 2 or `false` to disable striping.
+#   greater than or equal to 2.
 #
 # [*postgres*]
 #   If `true` xylem will manage postgres databases.
@@ -41,10 +41,10 @@
 #
 class xylem::node (
   $gluster           = false,
-  $gluster_mounts    = [],
-  $gluster_nodes     = [],
-  $gluster_replica   = false,
-  $gluster_stripe    = false,
+  $gluster_mounts    = undef,
+  $gluster_nodes     = undef,
+  $gluster_replica   = undef,
+  $gluster_stripe    = undef,
 
   $postgres          = false,
   $postgres_host     = undef,
@@ -56,9 +56,24 @@ class xylem::node (
   $repo_source       = 'p16n-seed',
   $package_ensure    = 'installed',
 ){
-  validate_array($gluster_mounts)
-  validate_array($gluster_nodes)
+  validate_bool($gluster)
+  validate_bool($postgres)
   validate_bool($repo_manage)
+
+  if $gluster {
+    unless is_array($gluster_mounts) and count($gluster_mounts) >= 1 {
+      fail('gluster_mounts must be an array with at least one element')
+    }
+    unless is_array($gluster_nodes) and count($gluster_nodes) >= 1 {
+      fail('gluster_nodes must be an array with at least one element')
+    }
+  }
+
+  if $postgres {
+    if $postgres_host == undef { fail('postgres_host must be provided') }
+    if $postgres_user == undef { fail('postgres_user must be provided') }
+    if $postgres_secret == undef { fail('postgres_secret must be provided') }
+  }
 
   if $repo_manage {
     class { 'xylem::repo':
