@@ -33,8 +33,14 @@ describe 'xylem::docker' do
         end
 
         it do
+          is_expected.to contain_file('/run/docker/plugins')
+            .with_ensure('directory')
+        end
+
+        it do
           is_expected.to contain_service('docker-xylem')
             .with_ensure('running')
+            .that_requires('File[/run/docker/plugins]')
             .that_subscribes_to('File[/etc/docker/xylem-plugin.yml]')
         end
       end
