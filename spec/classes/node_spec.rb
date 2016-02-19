@@ -37,11 +37,12 @@ describe 'xylem::node' do
         it do
           is_expected.to contain_file('/etc/xylem/xylem.yml')
             .with_content(match_yaml({
-                'queues' => [include(
+                'queues' => [{
                     'name' => 'gluster',
+                    'plugin' => 'seed.xylem.gluster',
                     'gluster_mounts' => nil,
                     'gluster_nodes' => nil,
-                )]
+                  }]
               }))
         end
 
@@ -57,11 +58,12 @@ describe 'xylem::node' do
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'queues' => [include(
+                  'queues' => [{
                       'name' => 'gluster',
+                      'plugin' => 'seed.xylem.gluster',
                       'gluster_mounts' => ['/data/brick1', '/data/brick2'],
                       'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                  )]
+                    }]
                 }))
           end
         end
@@ -80,13 +82,125 @@ describe 'xylem::node' do
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'queues' => [include(
+                  'queues' => [{
                       'name' => 'gluster',
+                      'plugin' => 'seed.xylem.gluster',
                       'gluster_mounts' => ['/data/brick1', '/data/brick2'],
                       'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
                       'gluster_replica' => 2,
                       'gluster_stripe' => 3,
-                  )]
+                    }]
+                }))
+          end
+        end
+      end
+
+      describe 'when postgres is configured' do
+        let(:params) { {:postgres => true} }
+
+        it do
+          is_expected.to contain_file('/etc/xylem/xylem.yml')
+            .with_content(match_yaml({
+                'queues' => [{
+                    'name' => 'postgres',
+                    'plugin' => 'seed.xylem.postgres',
+                    'key' => nil,
+                    'servers' => [{
+                        'hostname' => nil,
+                        'username' => nil,
+                      }]
+                  }]
+              }))
+        end
+
+        describe 'with all params' do
+          let(:params) do
+            {
+              :postgres => true,
+              :postgres_host => 'db.local',
+              :postgres_user => 'pguser',
+              :postgres_password => 'pgpass',
+              :postgres_secret => 'pgsec',
+            }
+          end
+
+          it do
+            is_expected.to contain_file('/etc/xylem/xylem.yml')
+              .with_content(match_yaml({
+                  'queues' => [{
+                      'name' => 'postgres',
+                      'plugin' => 'seed.xylem.postgres',
+                      'key' => 'pgsec',
+                      'servers' => [{
+                          'hostname' => 'db.local',
+                          'username' => 'pguser',
+                          'password' => 'pgpass',
+                        }]
+                    }]
+                }))
+          end
+        end
+      end
+
+      describe 'when gluster and postgres are configured' do
+        let(:params) { {:gluster => true, :postgres => true} }
+
+        it do
+          is_expected.to contain_file('/etc/xylem/xylem.yml')
+            .with_content(match_yaml({
+                'queues' => contain_exactly({
+                    'name' => 'gluster',
+                    'plugin' => 'seed.xylem.gluster',
+                    'gluster_mounts' => nil,
+                    'gluster_nodes' => nil,
+                  }, {
+                    'name' => 'postgres',
+                    'plugin' => 'seed.xylem.postgres',
+                    'key' => nil,
+                    'servers' => [{
+                        'hostname' => nil,
+                        'username' => nil,
+                      }]
+                  })
+              }))
+        end
+
+        describe 'with all params' do
+          let(:params) do
+            {
+              :gluster => true,
+              :gluster_mounts => ['/data/brick1', '/data/brick2'],
+              :gluster_nodes => ['gfs1.local', 'gfs2.local'],
+              :gluster_replica => 2,
+              :gluster_stripe => 3,
+              :postgres => true,
+              :postgres_host => 'db.local',
+              :postgres_user => 'pguser',
+              :postgres_password => 'pgpass',
+              :postgres_secret => 'pgsec',
+            }
+          end
+
+          it do
+            is_expected.to contain_file('/etc/xylem/xylem.yml')
+              .with_content(match_yaml({
+                  'queues' => contain_exactly({
+                      'name' => 'gluster',
+                      'plugin' => 'seed.xylem.gluster',
+                      'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+                      'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+                      'gluster_replica' => 2,
+                      'gluster_stripe' => 3,
+                    }, {
+                      'name' => 'postgres',
+                      'plugin' => 'seed.xylem.postgres',
+                      'key' => 'pgsec',
+                      'servers' => [{
+                          'hostname' => 'db.local',
+                          'username' => 'pguser',
+                          'password' => 'pgpass',
+                        }]
+                    })
                 }))
           end
         end
