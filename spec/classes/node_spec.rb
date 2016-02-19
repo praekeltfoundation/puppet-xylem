@@ -37,11 +37,12 @@ describe 'xylem::node' do
         it do
           is_expected.to contain_file('/etc/xylem/xylem.yml')
             .with_content(match_yaml({
-                'queues' => [include(
+                'queues' => [{
                     'name' => 'gluster',
+                    'plugin' => 'seed.xylem.gluster',
                     'gluster_mounts' => nil,
                     'gluster_nodes' => nil,
-                )]
+                  }]
               }))
         end
 
@@ -57,11 +58,12 @@ describe 'xylem::node' do
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'queues' => [include(
+                  'queues' => [{
                       'name' => 'gluster',
+                      'plugin' => 'seed.xylem.gluster',
                       'gluster_mounts' => ['/data/brick1', '/data/brick2'],
                       'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                  )]
+                    }]
                 }))
           end
         end
@@ -80,13 +82,14 @@ describe 'xylem::node' do
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'queues' => [include(
+                  'queues' => [{
                       'name' => 'gluster',
+                      'plugin' => 'seed.xylem.gluster',
                       'gluster_mounts' => ['/data/brick1', '/data/brick2'],
                       'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
                       'gluster_replica' => 2,
                       'gluster_stripe' => 3,
-                  )]
+                    }]
                 }))
           end
         end
