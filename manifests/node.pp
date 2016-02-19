@@ -25,16 +25,22 @@
 #   If `true` xylem will manage postgres databases.
 #
 # [*postgres_host*]
-#   XXX
+#   Host to create databases on.
 #
 # [*postgres_user*]
-#   XXX
+#   User to create databases with.
 #
 # [*postgres_password*]
-#   XXX
+#   Optional password for postgres user.
 #
 # [*postgres_secret*]
-#   XXX
+#   Secret key for storing generated credentials.
+#
+# [*repo_manage*]
+#   If true, xylem::repo will be used to manage the package repository.
+#
+# [*repo_source*]
+#   Repository source passed to xylem::repo.
 #
 # [*package_ensure*]
 #   The ensure value for the seed-xylem package.
