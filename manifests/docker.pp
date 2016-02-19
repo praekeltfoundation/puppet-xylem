@@ -7,6 +7,12 @@
 # [*backend*]
 #   The xylem backend host to talk to.
 #
+# [*repo_manage*]
+#   If true, xylem::repo will be used to manage the package repository.
+#
+# [*repo_source*]
+#   Repository source passed to xylem::repo.
+#
 # [*package_ensure*]
 #   The ensure value for the docker-xylem package.
 #
