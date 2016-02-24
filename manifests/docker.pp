@@ -12,13 +12,13 @@ class xylem::docker($server){
 
   file {'/run/docker/plugins':
     ensure => directory,
-    mode   => 0755
+    mode   => '0755'
   }
 
   file {'/etc/docker/xylem-plugin.yml':
     ensure  => present,
     content => template('xylem/xylem-plugin.yml.erb'),
-    mode    => 0644, 
+    mode    => '0644',
   }
 
   package {'docker-xylem':
