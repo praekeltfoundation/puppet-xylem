@@ -45,6 +45,15 @@
 # [*package_ensure*]
 #   The ensure value for the seed-xylem package.
 #
+# [*backend*]
+#   Set the rhumba backend to use for job queue
+#
+# [*redis_host*]
+#   Redis host to use when using the redis Rhumba backend
+#
+# [*redis_port*]
+#   Redis port to use when using the redis Rhumba backend
+#
 class xylem::node (
   $gluster           = false,
   $gluster_mounts    = undef,
@@ -57,6 +66,10 @@ class xylem::node (
   $postgres_user     = undef,
   $postgres_password = undef,
   $postgres_secret   = undef,
+
+  $backend           = undef,
+  $redis_host        = undef,
+  $redis_port        = undef,
 
   $repo_manage       = true,
   $repo_source       = 'p16n-seed',
