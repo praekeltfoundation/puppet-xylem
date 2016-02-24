@@ -1,4 +1,7 @@
 class xylem::node (
+    $backend='rhumba.backends.redis',
+    $redis_host='127.0.0.1',
+    $redis_port=6379,
     $gluster=false,
     $gluster_mounts=[],
     $gluster_nodes=[],

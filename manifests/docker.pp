@@ -11,27 +11,27 @@ class xylem::docker($server){
   }
 
   file {'/run/docker/plugins':
-    ensure   => directory,
-    mode     => 0755
+    ensure => directory,
+    mode   => 0755
   }
 
   file {'/etc/docker/xylem-plugin.yml':
-    ensure   => present,
-    content  => template('xylem/xylem-plugin.yml.erb'),
-    mode     => 0644, 
+    ensure  => present,
+    content => template('xylem/xylem-plugin.yml.erb'),
+    mode    => 0644, 
   }
 
   package {'docker-xylem':
-    ensure => latest,
+    ensure  => latest,
     require => Apt::Source['seed']
   }
 
   service {'docker-xylem':
-    ensure      => running,
-    require     => [
+    ensure    => running,
+    require   => [
         Package['docker-xylem'],
         File['/run/docker/plugins']
     ],
-    subscribe   => File['/etc/docker/xylem-plugin.yml'],
+    subscribe => File['/etc/docker/xylem-plugin.yml'],
   }
 }
