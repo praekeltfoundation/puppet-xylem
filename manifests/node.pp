@@ -58,6 +58,10 @@ class xylem::node (
   $postgres_password = undef,
   $postgres_secret   = undef,
 
+  $backend           = 'rhumba.backends.redis',
+  $redis_host        = '127.0.0.1',
+  $redis_port        = 6379,
+
   $repo_manage       = true,
   $repo_source       = 'p16n-seed',
   $package_ensure    = 'installed',
