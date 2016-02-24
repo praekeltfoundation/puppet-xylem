@@ -24,6 +24,9 @@ class {'xylem::node':
   postgres        => true,
   postgres_host   => 'localhost',
   postgres_user   => 'postgres',
+<<<<<<< HEAD
   postgres_secret => 'testkey'
+=======
+  postgres_secret => 'testkey',
+>>>>>>> develop
 }
-

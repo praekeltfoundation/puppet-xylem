@@ -1,12 +1,12 @@
 {
   "name": "praekeltfoundation-xylem",
-  "version": "0.0.3",
+  "version": "0.1.1-dev",
   "author": "Colin Alston",
   "summary": "Basic module to manage Xylem",
   "license": "BSD-3-Clause",
-  "source": "https://github.com/praekeltfoundation/seed-xylem",
-  "project_page": "https://github.com/praekeltfoundation/seed-xylem",
-  "issues_url": "https://github.com/praekeltfoundation/seed-xylem/issues",
+  "source": "https://github.com/praekeltfoundation/puppet-xylem",
+  "project_page": "https://github.com/praekeltfoundation/puppet-xylem",
+  "issues_url": "https://github.com/praekeltfoundation/puppet-xylem/issues",
   "dependencies": [
     {
       "name": "puppetlabs/apt"
@@ -22,7 +22,6 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "12.04",
         "14.04"
       ]
     }
