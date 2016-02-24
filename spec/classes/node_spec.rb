@@ -5,6 +5,11 @@ describe 'xylem::node' do
     context "on #{os}" do
       let(:facts) { facts }
       before(:each) do
+        @redis_params = {
+          :redis_host => 'redis.foo',
+          :redis_port => 1234,
+          :backend => 'awesome.backend'
+        }
         @gluster_params = {
           :gluster => true,
           :gluster_mounts => ['/data/brick1', '/data/brick2'],
@@ -34,12 +39,7 @@ describe 'xylem::node' do
 
         it do
           is_expected.to contain_file('/etc/xylem/xylem.yml')
-            .with_content(match_yaml({
-                'backend' => 'rhumba.backends.redis',
-                'redis_host' => '127.0.0.1',
-                'redis_port' => 6379,
-                'queues' => nil
-            }))
+            .with_content(match_yaml({'queues' => nil}))
         end
 
         it do
@@ -56,9 +56,6 @@ describe 'xylem::node' do
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'backend' => 'rhumba.backends.redis',
-                  'redis_host' => '127.0.0.1',
-                  'redis_port' => 6379,
                   'queues' => [{
                       'name' => 'gluster',
                       'plugin' => 'seed.xylem.gluster',
@@ -74,15 +71,15 @@ describe 'xylem::node' do
             @gluster_params.merge(
               :gluster_replica => 2,
               :gluster_stripe => 3,
-            )
+            ).merge(@redis_params)
           end
 
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'backend' => 'rhumba.backends.redis',
-                  'redis_host' => '127.0.0.1',
-                  'redis_port' => 6379,
+                  'redis_host' => 'redis.foo',
+                  'redis_port'=> 1234,
+                  'backend' => 'awesome.backend',
                   'queues' => [{
                       'name' => 'gluster',
                       'plugin' => 'seed.xylem.gluster',
@@ -116,9 +113,6 @@ describe 'xylem::node' do
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'backend' => 'rhumba.backends.redis',
-                  'redis_host' => '127.0.0.1',
-                  'redis_port' => 6379,
                   'queues' => [{
                       'name' => 'postgres',
                       'plugin' => 'seed.xylem.postgres',
@@ -134,15 +128,16 @@ describe 'xylem::node' do
 
         describe 'with all params' do
           let(:params) do
-            @postgres_params.merge(:postgres_password => 'pgpass')
+            @postgres_params.merge(:postgres_password => 'pgpass'
+                ).merge(@redis_params)
           end
 
           it do
             is_expected.to contain_file('/etc/xylem/xylem.yml')
               .with_content(match_yaml({
-                  'backend' => 'rhumba.backends.redis',
-                  'redis_host' => '127.0.0.1',
-                  'redis_port' => 6379,
+                  'redis_host' => 'redis.foo',
+                  'redis_port'=> 1234,
+                  'backend' => 'awesome.backend',
                   'queues' => [{
                       'name' => 'postgres',
                       'plugin' => 'seed.xylem.postgres',
@@ -175,9 +170,6 @@ describe 'xylem::node' do
         it do
           is_expected.to contain_file('/etc/xylem/xylem.yml')
             .with_content(match_yaml({
-                'backend' => 'rhumba.backends.redis',
-                'redis_host' => '127.0.0.1',
-                'redis_port' => 6379,
                 'queues' => contain_exactly({
                     'name' => 'gluster',
                     'plugin' => 'seed.xylem.gluster',
