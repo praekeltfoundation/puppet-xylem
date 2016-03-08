@@ -34,10 +34,16 @@ class xylem::docker (
   # This directory doesn't really belong to us, but we need it to exist and
   # docker apparently doesn't create it. Therefore, we manage it only if
   # nothing else already does.
-  unless defined(File['/run/docker/plugins']) {
-    file { '/run/docker/plugins':
+  unless defined(File['/etc/docker/plugins']) {
+    file { '/etc/docker/plugins':
       ensure => 'directory',
     }
+  }
+
+  file { '/etc/docker/plugins/xylem.spec':
+    ensure  => present,
+    content => 'unix:///run/docker-xylem.sock',
+    mode    => '0644',
   }
 
   package { 'docker-xylem':
@@ -52,7 +58,7 @@ class xylem::docker (
   ~>
   service { 'docker-xylem':
     ensure  => running,
-    require => File['/run/docker/plugins'],
+    require => File['/etc/docker/plugins/xylem.spec'],
   }
 
   if defined(Class['xylem::repo']) {

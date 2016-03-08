@@ -27,20 +27,25 @@ describe 'xylem::docker' do
                 'host' => 'gfs.local',
                 'port' => 7701,
                 'mount_path' => '/var/lib/docker/volumes',
-                'socket' => '/run/docker/plugins/xylem.sock',
+                'socket' => '/run/docker-xylem.sock',
               }))
             .that_requires('Package[docker-xylem]')
         end
 
         it do
-          is_expected.to contain_file('/run/docker/plugins')
+          is_expected.to contain_file('/etc/docker/plugins/xylem.spec')
+            .with_content('unix:///run/docker-xylem.sock')
+        end
+
+        it do
+          is_expected.to contain_file('/etc/docker/plugins')
             .with_ensure('directory')
         end
 
         it do
           is_expected.to contain_service('docker-xylem')
             .with_ensure('running')
-            .that_requires('File[/run/docker/plugins]')
+            .that_requires('File[/etc/docker/plugins/xylem.spec]')
             .that_subscribes_to('File[/etc/docker/xylem-plugin.yml]')
         end
       end
