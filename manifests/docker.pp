@@ -44,7 +44,6 @@ class xylem::docker (
     ensure  => present,
     content => 'unix:///run/docker-xylem.sock',
     mode    => '0644',
-    require => File['/etc/docker/plugins'],
   }
 
   package { 'docker-xylem':
