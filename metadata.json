@@ -1,6 +1,6 @@
 {
   "name": "praekeltfoundation-xylem",
-  "version": "0.1.2-dev",
+  "version": "0.1.3",
   "author": "Colin Alston",
   "summary": "Basic module to manage Xylem",
   "license": "BSD-3-Clause",
