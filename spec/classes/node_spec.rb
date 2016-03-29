@@ -37,13 +37,10 @@ describe 'xylem::node' do
             .with_ensure('installed')
         end
 
-        it { is_expected.to contain_class('xylem::config') }
-
-        it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
-
         it do
-          is_expected.to contain_concat__fragment('xylem_config_top')
-            .with_content(match_yaml({'queues' => nil}))
+          is_expected.to contain_class('xylem::config').only_with(
+            'name' => 'Xylem::Config',
+          )
         end
 
         it do
@@ -57,16 +54,13 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @redis_params }
 
-          it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
-
           it do
-            is_expected.to contain_concat__fragment('xylem_config_top')
-              .with_content(match_yaml({
-                  'redis_host' => 'redis.foo',
-                  'redis_port'=> 1234,
-                  'backend' => 'awesome.backend',
-                  'queues' => nil,
-                }))
+            is_expected.to contain_class('xylem::config').only_with(
+              'name' => 'Xylem::Config',
+              'backend' => 'awesome.backend',
+              'redis_host' => 'redis.foo',
+              'redis_port' => 1234,
+            )
           end
         end
       end
