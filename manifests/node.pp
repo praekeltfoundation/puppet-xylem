@@ -79,6 +79,8 @@ class xylem::node (
   validate_bool($postgres)
   validate_bool($repo_manage)
 
+  include xylem::config
+
   if $gluster {
     unless is_array($gluster_mounts) and count($gluster_mounts) >= 1 {
       fail('gluster_mounts must be an array with at least one element')
@@ -86,12 +88,20 @@ class xylem::node (
     unless is_array($gluster_nodes) and count($gluster_nodes) >= 1 {
       fail('gluster_nodes must be an array with at least one element')
     }
+    xylem::config::plugin { 'gluster':
+      plugin        => 'seed.xylem.gluster',
+      plugin_config => template('xylem/xylem.config.gluster.erb'),
+    }
   }
 
   if $postgres {
     if $postgres_host == undef { fail('postgres_host must be provided') }
     if $postgres_user == undef { fail('postgres_user must be provided') }
     if $postgres_secret == undef { fail('postgres_secret must be provided') }
+    xylem::config::plugin { 'postgres':
+      plugin        => 'seed.xylem.postgres',
+      plugin_config => template('xylem/xylem.config.postgres.erb'),
+    }
   }
 
   if $repo_manage {
@@ -105,11 +115,7 @@ class xylem::node (
     ensure => $package_ensure,
   }
   ->
-  file {'/etc/xylem/xylem.yml':
-    ensure  => present,
-    content => template('xylem/xylem.yml.erb'),
-    mode    => '0644',
-  }
+  Concat['/etc/xylem/xylem.yml']
   ~>
   service {'xylem':
     ensure => running,

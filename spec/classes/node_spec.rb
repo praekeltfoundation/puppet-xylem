@@ -37,15 +37,17 @@ describe 'xylem::node' do
             .with_ensure('installed')
         end
 
+        it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+
         it do
-          is_expected.to contain_file('/etc/xylem/xylem.yml')
+          is_expected.to contain_concat__fragment('xylem_config_top')
             .with_content(match_yaml({'queues' => nil}))
         end
 
         it do
           is_expected.to contain_service('xylem')
             .with_ensure('running')
-            .that_subscribes_to('File[/etc/xylem/xylem.yml]')
+            .that_subscribes_to('Concat[/etc/xylem/xylem.yml]')
         end
       end
 
@@ -53,16 +55,22 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @gluster_params }
 
+          it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+
           it do
-            is_expected.to contain_file('/etc/xylem/xylem.yml')
-              .with_content(match_yaml({
-                  'queues' => [{
-                      'name' => 'gluster',
-                      'plugin' => 'seed.xylem.gluster',
-                      'gluster_mounts' => ['/data/brick1', '/data/brick2'],
-                      'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                    }]
-                }))
+            is_expected.to contain_concat__fragment('xylem_config_top')
+              .with_content(match_yaml({'queues' => nil}))
+          end
+
+          it do
+            is_expected.to contain_concat__fragment(
+              'xylem_config_plugin_gluster')
+              .with_content(match_yaml([{
+                    'name' => 'gluster',
+                    'plugin' => 'seed.xylem.gluster',
+                    'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+                    'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+                  }]))
           end
         end
 
@@ -75,20 +83,16 @@ describe 'xylem::node' do
           end
 
           it do
-            is_expected.to contain_file('/etc/xylem/xylem.yml')
-              .with_content(match_yaml({
-                  'redis_host' => 'redis.foo',
-                  'redis_port'=> 1234,
-                  'backend' => 'awesome.backend',
-                  'queues' => [{
-                      'name' => 'gluster',
-                      'plugin' => 'seed.xylem.gluster',
-                      'gluster_mounts' => ['/data/brick1', '/data/brick2'],
-                      'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                      'gluster_replica' => 2,
-                      'gluster_stripe' => 3,
-                    }]
-                }))
+            is_expected.to contain_concat__fragment(
+              'xylem_config_plugin_gluster')
+              .with_content(match_yaml([{
+                    'name' => 'gluster',
+                    'plugin' => 'seed.xylem.gluster',
+                    'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+                    'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+                    'gluster_replica' => 2,
+                    'gluster_stripe' => 3,
+                  }]))
           end
         end
 
@@ -110,19 +114,25 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @postgres_params }
 
+          it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+
           it do
-            is_expected.to contain_file('/etc/xylem/xylem.yml')
-              .with_content(match_yaml({
-                  'queues' => [{
-                      'name' => 'postgres',
-                      'plugin' => 'seed.xylem.postgres',
-                      'key' => 'pgsec',
-                      'servers' => [{
-                          'hostname' => 'db.local',
-                          'username' => 'pguser',
-                        }]
-                    }]
-                }))
+            is_expected.to contain_concat__fragment('xylem_config_top')
+              .with_content(match_yaml({'queues' => nil}))
+          end
+
+          it do
+            is_expected.to contain_concat__fragment(
+              'xylem_config_plugin_postgres')
+              .with_content(match_yaml([{
+                    'name' => 'postgres',
+                    'plugin' => 'seed.xylem.postgres',
+                    'key' => 'pgsec',
+                    'servers' => [{
+                        'hostname' => 'db.local',
+                        'username' => 'pguser',
+                      }]
+                  }]))
           end
         end
 
@@ -133,22 +143,18 @@ describe 'xylem::node' do
           end
 
           it do
-            is_expected.to contain_file('/etc/xylem/xylem.yml')
-              .with_content(match_yaml({
-                  'redis_host' => 'redis.foo',
-                  'redis_port'=> 1234,
-                  'backend' => 'awesome.backend',
-                  'queues' => [{
-                      'name' => 'postgres',
-                      'plugin' => 'seed.xylem.postgres',
-                      'key' => 'pgsec',
-                      'servers' => [{
-                          'hostname' => 'db.local',
-                          'username' => 'pguser',
-                          'password' => 'pgpass',
-                        }]
-                    }]
-                }))
+            is_expected.to contain_concat__fragment(
+              'xylem_config_plugin_postgres')
+              .with_content(match_yaml([{
+                    'name' => 'postgres',
+                    'plugin' => 'seed.xylem.postgres',
+                    'key' => 'pgsec',
+                    'servers' => [{
+                        'hostname' => 'db.local',
+                        'username' => 'pguser',
+                        'password' => 'pgpass',
+                      }]
+                  }]))
           end
         end
 
@@ -167,24 +173,36 @@ describe 'xylem::node' do
       describe 'when gluster and postgres are configured' do
         let(:params) { @gluster_params.merge(@postgres_params) }
 
+        it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+
         it do
-          is_expected.to contain_file('/etc/xylem/xylem.yml')
-            .with_content(match_yaml({
-                'queues' => contain_exactly({
-                    'name' => 'gluster',
-                    'plugin' => 'seed.xylem.gluster',
-                    'gluster_mounts' => ['/data/brick1', '/data/brick2'],
-                    'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                  }, {
-                    'name' => 'postgres',
-                    'plugin' => 'seed.xylem.postgres',
-                    'key' => 'pgsec',
-                    'servers' => [{
-                        'hostname' => 'db.local',
-                        'username' => 'pguser',
-                      }]
-                  })
-              }))
+          is_expected.to contain_concat__fragment('xylem_config_top')
+            .with_content(match_yaml({'queues' => nil}))
+        end
+
+        it do
+          is_expected.to contain_concat__fragment(
+            'xylem_config_plugin_gluster')
+            .with_content(match_yaml([{
+                  'name' => 'gluster',
+                  'plugin' => 'seed.xylem.gluster',
+                  'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+                  'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+                }]))
+        end
+
+        it do
+          is_expected.to contain_concat__fragment(
+            'xylem_config_plugin_postgres')
+            .with_content(match_yaml([{
+                  'name' => 'postgres',
+                  'plugin' => 'seed.xylem.postgres',
+                  'key' => 'pgsec',
+                  'servers' => [{
+                      'hostname' => 'db.local',
+                      'username' => 'pguser',
+                    }]
+                }]))
         end
       end
 

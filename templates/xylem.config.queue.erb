@@ -1,0 +1,5 @@
+  - name: <%= @name %>
+    plugin: <%= @plugin %>
+<%- @plugin_config.each_line do |line| -%>
+    <%= line %>
+<%- end -%>

@@ -9,7 +9,10 @@
   "issues_url": "https://github.com/praekeltfoundation/puppet-xylem/issues",
   "dependencies": [
     {
-      "name": "puppetlabs/apt"
+      "name": "puppetlabs-apt"
+    },
+    {
+      "name": "puppetlabs-concat"
     }
   ],
   "requirements": [
