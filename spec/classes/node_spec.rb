@@ -27,41 +27,28 @@ describe 'xylem::node' do
         it { is_expected.to contain_class('xylem::node') }
 
         it do
-          is_expected.to contain_class('xylem::repo')
-            .with({'manage' => true, 'source' => 'p16n-seed'})
-            .that_comes_before('Package[seed-xylem]')
-        end
-
-        it do
-          is_expected.to contain_package('seed-xylem')
-            .with_ensure('installed')
-        end
-
-        it do
-          is_expected.to contain_class('xylem::config').only_with(
-            'name' => 'Xylem::Config',
+          is_expected.to contain_class('xylem::service').only_with(
+            'name' => 'Xylem::Service',
+            'repo_manage' => true,
+            'repo_source' => 'p16n-seed',
+            'package_ensure' => 'installed',
           )
-        end
-
-        it do
-          is_expected.to contain_service('xylem')
-            .with_ensure('running')
-            .that_subscribes_to('Concat[/etc/xylem/xylem.yml]')
         end
       end
 
       describe 'when redis is configured' do
-        describe 'with mandatory params' do
-          let(:params) { @redis_params }
+        let(:params) { @redis_params }
 
-          it do
-            is_expected.to contain_class('xylem::config').only_with(
-              'name' => 'Xylem::Config',
-              'backend' => 'awesome.backend',
-              'redis_host' => 'redis.foo',
-              'redis_port' => 1234,
-            )
-          end
+        it do
+          is_expected.to contain_class('xylem::service').only_with(
+            'name' => 'Xylem::Service',
+            'backend' => 'awesome.backend',
+            'redis_host' => 'redis.foo',
+            'redis_port' => 1234,
+            'repo_manage' => true,
+            'repo_source' => 'p16n-seed',
+            'package_ensure' => 'installed',
+          )
         end
       end
 
@@ -69,24 +56,14 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @gluster_params }
 
-          it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+          it { is_expected.to contain_class('xylem::service') }
 
           it do
-            is_expected.to contain_concat__fragment('xylem_config_top')
-              .with_content(match_yaml({'queues' => nil}))
-          end
-
-          it { is_expected.to contain_xylem__config__plugin('gluster') }
-
-          it do
-            is_expected.to contain_concat__fragment(
-              'xylem_config_plugin_gluster')
-              .with_content(match_yaml([{
-                    'name' => 'gluster',
-                    'plugin' => 'seed.xylem.gluster',
-                    'gluster_mounts' => ['/data/brick1', '/data/brick2'],
-                    'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                  }]))
+            is_expected.to contain_class('xylem::config::gluster').only_with(
+              'name' => 'Xylem::Config::Gluster',
+              'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+              'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+            )
           end
         end
 
@@ -99,26 +76,21 @@ describe 'xylem::node' do
           end
 
           it do
-            is_expected.to contain_concat__fragment('xylem_config_top')
-              .with_content(match_yaml({
-                  'redis_host' => 'redis.foo',
-                  'redis_port'=> 1234,
-                  'backend' => 'awesome.backend',
-                  'queues' => nil,
-                }))
+            is_expected.to contain_class('xylem::service').with(
+              'backend' => 'awesome.backend',
+              'redis_host' => 'redis.foo',
+              'redis_port' => 1234,
+            )
           end
 
           it do
-            is_expected.to contain_concat__fragment(
-              'xylem_config_plugin_gluster')
-              .with_content(match_yaml([{
-                    'name' => 'gluster',
-                    'plugin' => 'seed.xylem.gluster',
-                    'gluster_mounts' => ['/data/brick1', '/data/brick2'],
-                    'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                    'gluster_replica' => 2,
-                    'gluster_stripe' => 3,
-                  }]))
+            is_expected.to contain_class('xylem::config::gluster').only_with(
+              'name' => 'Xylem::Config::Gluster',
+              'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+              'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+              'gluster_replica' => 2,
+              'gluster_stripe' => 3,
+            )
           end
         end
 
@@ -140,27 +112,15 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @postgres_params }
 
-          it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+          it { is_expected.to contain_class('xylem::service') }
 
           it do
-            is_expected.to contain_concat__fragment('xylem_config_top')
-              .with_content(match_yaml({'queues' => nil}))
-          end
-
-          it { is_expected.to contain_xylem__config__plugin('postgres') }
-
-          it do
-            is_expected.to contain_concat__fragment(
-              'xylem_config_plugin_postgres')
-              .with_content(match_yaml([{
-                    'name' => 'postgres',
-                    'plugin' => 'seed.xylem.postgres',
-                    'key' => 'pgsec',
-                    'servers' => [{
-                        'hostname' => 'db.local',
-                        'username' => 'pguser',
-                      }]
-                  }]))
+            is_expected.to contain_class('xylem::config::postgres').only_with(
+              'name' => 'Xylem::Config::Postgres',
+              'postgres_host' => 'db.local',
+              'postgres_user' => 'pguser',
+              'postgres_secret' => 'pgsec',
+            )
           end
         end
 
@@ -171,28 +131,21 @@ describe 'xylem::node' do
           end
 
           it do
-            is_expected.to contain_concat__fragment('xylem_config_top')
-              .with_content(match_yaml({
-                  'redis_host' => 'redis.foo',
-                  'redis_port'=> 1234,
-                  'backend' => 'awesome.backend',
-                  'queues' => nil,
-                }))
+            is_expected.to contain_class('xylem::service').with(
+              'backend' => 'awesome.backend',
+              'redis_host' => 'redis.foo',
+              'redis_port' => 1234,
+            )
           end
 
           it do
-            is_expected.to contain_concat__fragment(
-              'xylem_config_plugin_postgres')
-              .with_content(match_yaml([{
-                    'name' => 'postgres',
-                    'plugin' => 'seed.xylem.postgres',
-                    'key' => 'pgsec',
-                    'servers' => [{
-                        'hostname' => 'db.local',
-                        'username' => 'pguser',
-                        'password' => 'pgpass',
-                      }]
-                  }]))
+            is_expected.to contain_class('xylem::config::postgres').only_with(
+              'name' => 'Xylem::Config::Postgres',
+              'postgres_host' => 'db.local',
+              'postgres_user' => 'pguser',
+              'postgres_secret' => 'pgsec',
+              'postgres_password' => 'pgpass',
+            )
           end
         end
 
@@ -211,41 +164,32 @@ describe 'xylem::node' do
       describe 'when gluster and postgres are configured' do
         let(:params) { @gluster_params.merge(@postgres_params) }
 
-        it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+        it { is_expected.to contain_class('xylem::service') }
 
         it do
-          is_expected.to contain_concat__fragment('xylem_config_top')
-            .with_content(match_yaml({'queues' => nil}))
+          is_expected.to contain_class('xylem::config::gluster').only_with(
+            'name' => 'Xylem::Config::Gluster',
+            'gluster_mounts' => ['/data/brick1', '/data/brick2'],
+            'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
+          )
         end
 
         it do
-          is_expected.to contain_concat__fragment(
-            'xylem_config_plugin_gluster')
-            .with_content(match_yaml([{
-                  'name' => 'gluster',
-                  'plugin' => 'seed.xylem.gluster',
-                  'gluster_mounts' => ['/data/brick1', '/data/brick2'],
-                  'gluster_nodes' => ['gfs1.local', 'gfs2.local'],
-                }]))
-        end
-
-        it do
-          is_expected.to contain_concat__fragment(
-            'xylem_config_plugin_postgres')
-            .with_content(match_yaml([{
-                  'name' => 'postgres',
-                  'plugin' => 'seed.xylem.postgres',
-                  'key' => 'pgsec',
-                  'servers' => [{
-                      'hostname' => 'db.local',
-                      'username' => 'pguser',
-                    }]
-                }]))
+          is_expected.to contain_class('xylem::config::postgres').only_with(
+            'name' => 'Xylem::Config::Postgres',
+            'postgres_host' => 'db.local',
+            'postgres_user' => 'pguser',
+            'postgres_secret' => 'pgsec',
+          )
         end
       end
 
       describe 'when package_ensure is purged' do
         let(:params) { {:package_ensure => 'purged'} }
+        it do
+          is_expected.to contain_class('xylem::service')
+            .with_package_ensure('purged')
+        end
         it do
           is_expected.to contain_package('seed-xylem')
             .with_ensure('purged')
@@ -254,6 +198,10 @@ describe 'xylem::node' do
 
       describe 'when repo_manage is false' do
         let(:params) { {:repo_manage => false} }
+        it do
+          is_expected.to contain_class('xylem::service')
+            .with_repo_manage(false)
+        end
         it do
           is_expected.not_to contain_class('xylem::repo')
         end
