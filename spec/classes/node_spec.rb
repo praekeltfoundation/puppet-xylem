@@ -37,6 +37,8 @@ describe 'xylem::node' do
             .with_ensure('installed')
         end
 
+        it { is_expected.to contain_class('xylem::config') }
+
         it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
 
         it do
@@ -51,6 +53,24 @@ describe 'xylem::node' do
         end
       end
 
+      describe 'when redis is configured' do
+        describe 'with mandatory params' do
+          let(:params) { @redis_params }
+
+          it { is_expected.to contain_concat('/etc/xylem/xylem.yml') }
+
+          it do
+            is_expected.to contain_concat__fragment('xylem_config_top')
+              .with_content(match_yaml({
+                  'redis_host' => 'redis.foo',
+                  'redis_port'=> 1234,
+                  'backend' => 'awesome.backend',
+                  'queues' => nil,
+                }))
+          end
+        end
+      end
+
       describe 'when gluster is configured' do
         describe 'with mandatory params' do
           let(:params) { @gluster_params }
@@ -61,6 +81,8 @@ describe 'xylem::node' do
             is_expected.to contain_concat__fragment('xylem_config_top')
               .with_content(match_yaml({'queues' => nil}))
           end
+
+          it { is_expected.to contain_xylem__config__plugin('gluster') }
 
           it do
             is_expected.to contain_concat__fragment(
@@ -80,6 +102,16 @@ describe 'xylem::node' do
               :gluster_replica => 2,
               :gluster_stripe => 3,
             ).merge(@redis_params)
+          end
+
+          it do
+            is_expected.to contain_concat__fragment('xylem_config_top')
+              .with_content(match_yaml({
+                  'redis_host' => 'redis.foo',
+                  'redis_port'=> 1234,
+                  'backend' => 'awesome.backend',
+                  'queues' => nil,
+                }))
           end
 
           it do
@@ -121,6 +153,8 @@ describe 'xylem::node' do
               .with_content(match_yaml({'queues' => nil}))
           end
 
+          it { is_expected.to contain_xylem__config__plugin('postgres') }
+
           it do
             is_expected.to contain_concat__fragment(
               'xylem_config_plugin_postgres')
@@ -140,6 +174,16 @@ describe 'xylem::node' do
           let(:params) do
             @postgres_params.merge(:postgres_password => 'pgpass'
                 ).merge(@redis_params)
+          end
+
+          it do
+            is_expected.to contain_concat__fragment('xylem_config_top')
+              .with_content(match_yaml({
+                  'redis_host' => 'redis.foo',
+                  'redis_port'=> 1234,
+                  'backend' => 'awesome.backend',
+                  'queues' => nil,
+                }))
           end
 
           it do

@@ -79,7 +79,11 @@ class xylem::node (
   validate_bool($postgres)
   validate_bool($repo_manage)
 
-  include xylem::config
+  class { 'xylem::config':
+    backend    => $backend,
+    redis_host => $redis_host,
+    redis_port => $redis_port,
+  }
 
   if $gluster {
     unless is_array($gluster_mounts) and count($gluster_mounts) >= 1 {
