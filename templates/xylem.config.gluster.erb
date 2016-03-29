@@ -1,0 +1,14 @@
+gluster_mounts:
+  <%- @gluster_mounts.each do |mp| -%>
+  - <%= mp %>
+  <%- end -%>
+gluster_nodes:
+  <%- @gluster_nodes.each do |node| -%>
+  - <%= node %>
+  <%- end -%>
+<%- if @gluster_replica then -%>
+gluster_replica: <%= @gluster_replica %>
+<%- end -%>
+<%- if @gluster_stripe then -%>
+gluster_stripe: <%= @gluster_stripe %>
+<%- end -%>

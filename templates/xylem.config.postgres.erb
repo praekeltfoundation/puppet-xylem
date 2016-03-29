@@ -1,0 +1,7 @@
+key: <%= @postgres_secret %>
+servers:
+  - hostname: <%= @postgres_host %>
+    username: <%= @postgres_user %>
+    <%- if @postgres_password -%>
+    password: <%= @postgres_password %>
+    <%- end -%>
