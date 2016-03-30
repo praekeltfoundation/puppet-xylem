@@ -77,55 +77,31 @@ class xylem::node (
 ){
   validate_bool($gluster)
   validate_bool($postgres)
-  validate_bool($repo_manage)
-
-  class { 'xylem::config':
-    backend    => $backend,
-    redis_host => $redis_host,
-    redis_port => $redis_port,
-  }
 
   if $gluster {
-    unless is_array($gluster_mounts) and count($gluster_mounts) >= 1 {
-      fail('gluster_mounts must be an array with at least one element')
-    }
-    unless is_array($gluster_nodes) and count($gluster_nodes) >= 1 {
-      fail('gluster_nodes must be an array with at least one element')
-    }
-    xylem::config::plugin { 'gluster':
-      plugin        => 'seed.xylem.gluster',
-      plugin_config => template('xylem/xylem.config.gluster.erb'),
+    class { 'xylem::config::gluster':
+      gluster_mounts  => $gluster_mounts,
+      gluster_nodes   => $gluster_nodes,
+      gluster_replica => $gluster_replica,
+      gluster_stripe  => $gluster_stripe,
     }
   }
 
   if $postgres {
-    if $postgres_host == undef { fail('postgres_host must be provided') }
-    if $postgres_user == undef { fail('postgres_user must be provided') }
-    if $postgres_secret == undef { fail('postgres_secret must be provided') }
-    xylem::config::plugin { 'postgres':
-      plugin        => 'seed.xylem.postgres',
-      plugin_config => template('xylem/xylem.config.postgres.erb'),
+    class { 'xylem::config::postgres':
+      postgres_host     => $postgres_host,
+      postgres_user     => $postgres_user,
+      postgres_password => $postgres_password,
+      postgres_secret   => $postgres_secret,
     }
   }
 
-  if $repo_manage {
-    class { 'xylem::repo':
-      manage => $repo_manage,
-      source => $repo_source,
-    }
-  }
-
-  package { 'seed-xylem':
-    ensure => $package_ensure,
-  }
-  ->
-  Concat['/etc/xylem/xylem.yml']
-  ~>
-  service {'xylem':
-    ensure => running,
-  }
-
-  if defined(Class['xylem::repo']) {
-    Class['xylem::repo'] -> Package['seed-xylem']
+  class { 'xylem':
+    backend        => $backend,
+    redis_host     => $redis_host,
+    redis_port     => $redis_port,
+    repo_manage    => $repo_manage,
+    repo_source    => $repo_source,
+    package_ensure => $package_ensure,
   }
 }

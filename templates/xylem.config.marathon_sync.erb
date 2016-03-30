@@ -1,0 +1,10 @@
+<%- if @marathon_host then -%>
+marathon_host: <%= @marathon_host %>
+<%- end -%>
+<%- if @marathon_port then -%>
+marathon_port: <%= @marathon_port %>
+<%- end -%>
+group_json_files:
+  <%- @group_json_files.each do |mp| -%>
+  - <%= mp %>
+  <%- end -%>
