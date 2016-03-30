@@ -6,17 +6,17 @@
 # [*postgres_user*]
 #   User to create databases with.
 #
-# [*postgres_password*]
-#   Optional password for postgres user.
-#
 # [*postgres_secret*]
 #   Secret key for storing generated credentials.
 #
+# [*postgres_password*]
+#   Optional password for postgres user.
+#
 class xylem::config::postgres(
-  $postgres_host     = undef,
-  $postgres_user     = undef,
+  $postgres_host,
+  $postgres_user,
+  $postgres_secret,
   $postgres_password = undef,
-  $postgres_secret   = undef,
 ) {
   if $postgres_host == undef { fail('postgres_host must be provided') }
   if $postgres_user == undef { fail('postgres_user must be provided') }

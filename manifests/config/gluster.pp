@@ -15,8 +15,8 @@
 #   greater than or equal to 2.
 #
 class xylem::config::gluster(
-  $gluster_mounts  = undef,
-  $gluster_nodes   = undef,
+  $gluster_mounts,
+  $gluster_nodes,
   $gluster_replica = undef,
   $gluster_stripe  = undef,
 ) {
