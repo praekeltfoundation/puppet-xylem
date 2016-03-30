@@ -96,7 +96,7 @@ class xylem::node (
     }
   }
 
-  class { 'xylem::service':
+  class { 'xylem':
     backend        => $backend,
     redis_host     => $redis_host,
     redis_port     => $redis_port,

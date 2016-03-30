@@ -1,4 +1,4 @@
-# == Class: xylem::service
+# == Class: xylem
 #
 # Installs Xylem and configures and manages the service.
 #
@@ -22,7 +22,7 @@
 # [*redis_port*]
 #   Redis port to use when using the redis Rhumba backend
 #
-class xylem::service (
+class xylem (
   $backend           = undef,
   $redis_host        = undef,
   $redis_port        = undef,

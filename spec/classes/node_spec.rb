@@ -27,8 +27,8 @@ describe 'xylem::node' do
         it { is_expected.to contain_class('xylem::node') }
 
         it do
-          is_expected.to contain_class('xylem::service').only_with(
-            'name' => 'Xylem::Service',
+          is_expected.to contain_class('xylem').only_with(
+            'name' => 'Xylem',
             'repo_manage' => true,
             'repo_source' => 'p16n-seed',
             'package_ensure' => 'installed',
@@ -40,8 +40,8 @@ describe 'xylem::node' do
         let(:params) { @redis_params }
 
         it do
-          is_expected.to contain_class('xylem::service').only_with(
-            'name' => 'Xylem::Service',
+          is_expected.to contain_class('xylem').only_with(
+            'name' => 'Xylem',
             'backend' => 'awesome.backend',
             'redis_host' => 'redis.foo',
             'redis_port' => 1234,
@@ -56,7 +56,7 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @gluster_params }
 
-          it { is_expected.to contain_class('xylem::service') }
+          it { is_expected.to contain_class('xylem') }
 
           it do
             is_expected.to contain_class('xylem::config::gluster').only_with(
@@ -76,7 +76,7 @@ describe 'xylem::node' do
           end
 
           it do
-            is_expected.to contain_class('xylem::service').with(
+            is_expected.to contain_class('xylem').with(
               'backend' => 'awesome.backend',
               'redis_host' => 'redis.foo',
               'redis_port' => 1234,
@@ -112,7 +112,7 @@ describe 'xylem::node' do
         describe 'with mandatory params' do
           let(:params) { @postgres_params }
 
-          it { is_expected.to contain_class('xylem::service') }
+          it { is_expected.to contain_class('xylem') }
 
           it do
             is_expected.to contain_class('xylem::config::postgres').only_with(
@@ -131,7 +131,7 @@ describe 'xylem::node' do
           end
 
           it do
-            is_expected.to contain_class('xylem::service').with(
+            is_expected.to contain_class('xylem').with(
               'backend' => 'awesome.backend',
               'redis_host' => 'redis.foo',
               'redis_port' => 1234,
@@ -164,7 +164,7 @@ describe 'xylem::node' do
       describe 'when gluster and postgres are configured' do
         let(:params) { @gluster_params.merge(@postgres_params) }
 
-        it { is_expected.to contain_class('xylem::service') }
+        it { is_expected.to contain_class('xylem') }
 
         it do
           is_expected.to contain_class('xylem::config::gluster').only_with(
@@ -187,7 +187,7 @@ describe 'xylem::node' do
       describe 'when package_ensure is purged' do
         let(:params) { {:package_ensure => 'purged'} }
         it do
-          is_expected.to contain_class('xylem::service')
+          is_expected.to contain_class('xylem')
             .with_package_ensure('purged')
         end
         it do
@@ -199,7 +199,7 @@ describe 'xylem::node' do
       describe 'when repo_manage is false' do
         let(:params) { {:repo_manage => false} }
         it do
-          is_expected.to contain_class('xylem::service')
+          is_expected.to contain_class('xylem')
             .with_repo_manage(false)
         end
         it do

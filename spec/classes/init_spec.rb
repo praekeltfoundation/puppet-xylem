@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'xylem::service' do
+describe 'xylem' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) { facts }
@@ -13,7 +13,7 @@ describe 'xylem::service' do
       end
 
       describe 'with default parameters' do
-        it { is_expected.to contain_class('xylem::service') }
+        it { is_expected.to contain_class('xylem') }
 
         it do
           is_expected.to contain_class('xylem::repo')
