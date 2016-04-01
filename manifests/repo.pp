@@ -22,12 +22,16 @@ class xylem::repo (
         $urlbase = 'https://praekeltfoundation.github.io'
 
         apt::source{ 'p16n-seed':
-          location    => 'https://praekeltfoundation.github.io/packages/',
-          repos       => 'main',
-          release     => inline_template('<%= @lsbdistcodename.downcase %>'),
-          key         => 'F996C16C',
-          key_server  => 'keyserver.ubuntu.com',
-          include_src => false,
+          location => 'https://praekeltfoundation.github.io/packages/',
+          repos    => 'main',
+          release  => inline_template('<%= @lsbdistcodename.downcase %>'),
+          include  => {
+            src => false,
+          },
+          key      => {
+            id     => '864DC0AA3139DFA3C332B9527EAFC9B3F996C16C',
+            server => 'keyserver.ubuntu.com',
+          },
         }
 
         # Ensure apt-get update runs as part of this class
