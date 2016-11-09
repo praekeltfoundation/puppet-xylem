@@ -5,3 +5,6 @@ servers:
     <%- if @postgres_password -%>
     password: <%= @postgres_password %>
     <%- end -%>
+    <%- if @postgres_connect_addr -%>
+    connect_addr: <%= @postgres_connect_addr %>
+    <%- end -%>

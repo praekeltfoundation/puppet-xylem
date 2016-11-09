@@ -12,11 +12,15 @@
 # [*postgres_password*]
 #   Optional password for postgres user.
 #
+# [*postgres_connect_addr*]
+#   Optional connection address for postgres server.
+#
 class xylem::config::postgres(
   $postgres_host,
   $postgres_user,
   $postgres_secret,
   $postgres_password = undef,
+  $postgres_connect_addr = undef,
 ) {
   if $postgres_host == undef { fail('postgres_host must be provided') }
   if $postgres_user == undef { fail('postgres_user must be provided') }
