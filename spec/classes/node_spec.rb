@@ -126,8 +126,10 @@ describe 'xylem::node' do
 
         describe 'with all params' do
           let(:params) do
-            @postgres_params.merge(:postgres_password => 'pgpass'
-                ).merge(@redis_params)
+            @postgres_params.merge(
+              :postgres_password => 'pgpass',
+              :postgres_connect_addr => 'localhost',
+            ).merge(@redis_params)
           end
 
           it do
@@ -145,6 +147,7 @@ describe 'xylem::node' do
               'postgres_user' => 'pguser',
               'postgres_secret' => 'pgsec',
               'postgres_password' => 'pgpass',
+              'postgres_connect_addr' => 'localhost',
             )
           end
         end

@@ -36,6 +36,9 @@
 # [*postgres_secret*]
 #   Secret key for storing generated credentials.
 #
+# [*postgres_connect_addr*]
+#   Optional connection address for postgres server.
+#
 # [*repo_manage*]
 #   If true, xylem::repo will be used to manage the package repository.
 #
@@ -55,25 +58,26 @@
 #   Redis port to use when using the redis Rhumba backend
 #
 class xylem::node (
-  $gluster           = false,
-  $gluster_mounts    = undef,
-  $gluster_nodes     = undef,
-  $gluster_replica   = undef,
-  $gluster_stripe    = undef,
+  $gluster               = false,
+  $gluster_mounts        = undef,
+  $gluster_nodes         = undef,
+  $gluster_replica       = undef,
+  $gluster_stripe        = undef,
 
-  $postgres          = false,
-  $postgres_host     = undef,
-  $postgres_user     = undef,
-  $postgres_password = undef,
-  $postgres_secret   = undef,
+  $postgres              = false,
+  $postgres_host         = undef,
+  $postgres_user         = undef,
+  $postgres_password     = undef,
+  $postgres_secret       = undef,
+  $postgres_connect_addr = undef,
 
-  $backend           = undef,
-  $redis_host        = undef,
-  $redis_port        = undef,
+  $backend               = undef,
+  $redis_host            = undef,
+  $redis_port            = undef,
 
-  $repo_manage       = true,
-  $repo_source       = 'p16n-seed',
-  $package_ensure    = 'installed',
+  $repo_manage           = true,
+  $repo_source           = 'p16n-seed',
+  $package_ensure        = 'installed',
 ){
   validate_bool($gluster)
   validate_bool($postgres)
@@ -89,10 +93,11 @@ class xylem::node (
 
   if $postgres {
     class { 'xylem::config::postgres':
-      postgres_host     => $postgres_host,
-      postgres_user     => $postgres_user,
-      postgres_password => $postgres_password,
-      postgres_secret   => $postgres_secret,
+      postgres_host         => $postgres_host,
+      postgres_user         => $postgres_user,
+      postgres_password     => $postgres_password,
+      postgres_secret       => $postgres_secret,
+      postgres_connect_addr => $postgres_connect_addr,
     }
   }
 
