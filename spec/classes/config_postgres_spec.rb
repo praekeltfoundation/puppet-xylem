@@ -35,7 +35,9 @@ describe 'xylem::config::postgres' do
 
       describe 'with all params' do
         let(:params) do
-          @postgres_params.merge(:postgres_password => 'pgpass')
+          @postgres_params.merge(
+            :postgres_password => 'pgpass',
+            :postgres_connect_addr => 'localhost')
         end
 
         it do
@@ -49,6 +51,7 @@ describe 'xylem::config::postgres' do
                       'hostname' => 'db.local',
                       'username' => 'pguser',
                       'password' => 'pgpass',
+                      'connect_addr' => 'localhost',
                     }]
                 }]))
         end
